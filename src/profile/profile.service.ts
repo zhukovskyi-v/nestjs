@@ -14,6 +14,7 @@ export class ProfileService {
     @InjectRepository(FollowEntity)
     private readonly followRepository: Repository<FollowEntity>,
   ) {}
+
   async getProfile(userId: number, username: string): Promise<ProfileType> {
     const user = await this.profileRepository.findOne({ username });
     if (!user) {
@@ -68,7 +69,7 @@ export class ProfileService {
     }
     if (userId === user.id) {
       throw new HttpException(
-        `Follower and following cant be equal`,
+        `Unfollow and following cant be equal`,
         HttpStatus.BAD_REQUEST,
       );
     }

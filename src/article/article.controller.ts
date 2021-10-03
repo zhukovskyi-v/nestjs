@@ -19,6 +19,7 @@ import { CreateArticleDto } from './dto/createArticle.dto';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
 import { UpdateArticleDto } from './dto/updateArticle.dto';
 import { ArticlesResponseInterface } from './types/articlesResponse.interface';
+import { BackendValidationPipe } from '../shared/pipes/backend.validation.pipe';
 
 @Controller('articles')
 export class ArticleController {
@@ -34,7 +35,6 @@ export class ArticleController {
 
   @Post(':slug/favorite')
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
   async likeArticle(@User('id') userId: number, @Param('slug') slug: string) {
     const article = this.articleService.likeArticle(userId, slug);
     return this.articleService.buildArticleResponse(await article);
@@ -42,7 +42,6 @@ export class ArticleController {
 
   @Delete(':slug/favorite')
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
   async unlikeArticle(@User('id') userId: number, @Param('slug') slug: string) {
     const article = this.articleService.unlikeArticle(userId, slug);
     return this.articleService.buildArticleResponse(await article);
@@ -50,7 +49,6 @@ export class ArticleController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
   async create(
     @User() user: UserEntity,
     @Body('article') createArticleDto: CreateArticleDto,
@@ -72,7 +70,6 @@ export class ArticleController {
 
   @Put(':slug')
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
   async updateArticle(
     @User('id') userId: number,
     @Body('article') updateArticleDto: UpdateArticleDto,

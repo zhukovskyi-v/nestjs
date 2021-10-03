@@ -22,24 +22,17 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @UsePipes(new ValidationPipe())
   async createUser(
     @Body('user') createUserDto: CreateUserDto,
   ): Promise<UserResponseInterface> {
     const user = await this.userService.createUser(createUserDto);
     return this.userService.buildUserResponse(user);
   }
-  // @Get()
-  // async getAllUsers(): Promise<UserEntity[]> {
-  //   return await this.userService.getAllUsers();
-  // }
 
   @Post('login')
-  @UsePipes(new ValidationPipe())
   async login(
     @Body('user') loginUser: LoginUserDto,
   ): Promise<UserResponseInterface> {
-    console.log(loginUser);
     const user = await this.userService.loginUser(loginUser);
     return this.userService.buildUserResponse(user);
   }
@@ -56,7 +49,6 @@ export class UserController {
     @User('id') userId: number,
     @Body('user') updateUserDto: UpdateUserDto,
   ): Promise<UserResponseInterface> {
-    console.log(updateUserDto);
     const user = await this.userService.updateUser(userId, updateUserDto);
     return this.userService.buildUserResponse(user);
   }

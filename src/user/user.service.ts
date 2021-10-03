@@ -31,6 +31,9 @@ export class UserService {
     return this.userRepository.findOne(id);
   }
   async createUser(createUserDto: CreateUserDto) {
+    const errorsResponse = {
+      errors: {},
+    };
     const userByEmail = await this.userRepository.findOne({
       email: createUserDto.email,
     });
@@ -38,16 +41,13 @@ export class UserService {
       username: createUserDto.username,
     });
     if (userByEmail) {
-      throw new HttpException(
-        'Email already used',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      errorsResponse.errors['email'] = 'has already been taken';
+      throw new HttpException(errorsResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
     if (userByUserName) {
-      throw new HttpException(
-        'Username already used',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      errorsResponse.errors['username'] = 'has already been taken';
+
+      throw new HttpException(errorsResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
     const newUser = new UserEntity();
     Object.assign(newUser, createUserDto);
@@ -55,6 +55,9 @@ export class UserService {
   }
 
   async loginUser(loginUser: LoginUserDto): Promise<UserEntity> {
+    const errorsResponse = {
+      errors: {},
+    };
     const userByEmail = await this.userRepository.findOne(
       {
         email: loginUser.email,
@@ -62,10 +65,9 @@ export class UserService {
       { select: ['email', 'bio', 'image', 'id', 'password', 'username'] },
     );
     if (!userByEmail) {
-      throw new HttpException(
-        'There is no such email',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      errorsResponse.errors['email'] = 'has already been taken';
+
+      throw new HttpException(errorsResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     const isPasswordCorrect = await compare(
@@ -77,7 +79,8 @@ export class UserService {
       delete userByEmail.password;
       return userByEmail;
     }
-    throw new HttpException('There is no such password', 403);
+    errorsResponse.errors['password'] = 'password incorrect';
+    throw new HttpException(errorsResponse, 403);
   }
   async getAllUsers(): Promise<UserEntity[]> {
     return await this.userRepository.find();
