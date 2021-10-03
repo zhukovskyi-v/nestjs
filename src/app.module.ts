@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import config from './ormconfig';
 import { AuthMiddleware } from './user/middelwares/auth.middleware';
 import { ArticleModule } from './article/article.module';
+import { ProfileController } from './profile/profile.controller';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -14,8 +16,9 @@ import { ArticleModule } from './article/article.module';
     TagModule,
     UserModule,
     ArticleModule,
+    ProfileModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ProfileController],
   providers: [AppService],
 })
 export class AppModule {
